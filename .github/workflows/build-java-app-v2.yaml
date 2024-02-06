@@ -1,0 +1,43 @@
+name: Dev deployment
+
+on: [pull_request]
+
+env:
+  java_version: 17
+  distribution: 'temurin'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v4
+        with:
+          deny-packages: 'pkg:maven/org.springframework.boot/spring-boot-data-rest,pkg:maven/org.springframework.boot/spring-data-rest-webmvc'
+
+  build:
+    name: Build app
+    runs-on: ubuntu-latest
+    environment: ubuntu-latest
+    needs: dependency-review
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK ${{ env.java_version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.java_version }}
+          cache: 'maven'
+          distribution: ${{ env.distribution }}
+
+      - name: Build with Maven
+        run: mvn -B clean install -s ~/.m2/settings.xml -P${{ inputs.app_profile }}
+
