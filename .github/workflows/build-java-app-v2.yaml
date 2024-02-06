@@ -19,7 +19,7 @@ jobs:
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v4
         with:
-          deny-packages: 'pkg:maven/org.springframework.boot:spring-boot-data-rest,pkg:maven/org.springframework.boot:spring-data-rest-webmvc'
+          deny-packages: 'pkg:maven/org.springframework.boot:spring-boot-starter-data-rest,pkg:maven/org.springframework.boot:spring-data-rest-webmvc'
 
   build:
     name: Build app
